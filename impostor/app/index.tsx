@@ -1,10 +1,22 @@
-import { View, Text } from "react-native";
-import React from "react";
+import Button from "@/components/Button";
+import MainView from "@/components/MainView";
+import TextButton from "@/components/TextButton";
+import { useRouter } from "expo-router";
+import { View } from "react-native";
 
 export default function Index() {
+  const router = useRouter();
   return (
-    <View>
-      <Text className="text-6xl">Inicio</Text>
-    </View>
+    <MainView>
+      <View className="flex-1 justify-center items-center gap-4">
+        <Button
+          onPress={() => {
+            router.push("/gameConfig");
+          }}
+        >
+          <TextButton>Comenzar Juego</TextButton>
+        </Button>
+      </View>
+    </MainView>
   );
 }

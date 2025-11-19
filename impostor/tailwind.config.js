@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+import { COLORS } from "./constants/colors";
 export const content = [
   "./app/**/*.{js,jsx,ts,tsx}",
   "./components/**/*.{js,jsx,ts,tsx}",
@@ -6,14 +7,7 @@ export const content = [
 export const presets = [require("nativewind/preset")];
 export const theme = {
   extend: {
-    colors: {
-      app: { primary: "#8d25f5", secondary: "#3b1661", tertiary: "#302838" },
-      background: { primary: "#191022", secondary: "#1b1d2f" },
-      onBackground: {
-        primary: "#e6e1e5",
-        secondary: "#a39da8",
-      },
-    },
+    colors: COLORS,
   },
 };
 export const plugins = [];
