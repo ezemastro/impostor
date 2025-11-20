@@ -11,6 +11,8 @@ interface CurrentGameStore {
   setCards: (cards: Card[]) => void;
   spyCount: number;
   setSpyCount: (spyCount: number) => void;
+  currentCard: Card | null;
+  setCurrentCard: (currentCard: Card | null) => void;
 }
 
 export const useCurrentGameStore = create<CurrentGameStore>()(
@@ -25,6 +27,9 @@ export const useCurrentGameStore = create<CurrentGameStore>()(
       setCards: (cards: Card[]) => set(() => ({ cards })),
       spyCount: 1,
       setSpyCount: (spyCount: number) => set(() => ({ spyCount })),
+      currentCard: null,
+      setCurrentCard: (currentCard: Card | null) =>
+        set(() => ({ currentCard })),
     }),
     {
       name: "current-game-store",

@@ -1,7 +1,13 @@
 import MainView from "@/components/MainView";
 import { useGame } from "@/hooks/game";
-import { useCallback, useState } from "react";
-import { Dimensions, StyleProp, View, ViewStyle } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import {
+  Dimensions,
+  ImageBackground,
+  StyleProp,
+  View,
+  ViewStyle,
+} from "react-native";
 import Animated, {
   AnimatedProps,
   AnimatedStyle,
@@ -18,25 +24,39 @@ import {
   GestureHandlerRootView,
 } from "react-native-gesture-handler";
 import CustomText from "@/components/CustomText";
+import { useRouter } from "expo-router";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
 export default function Game() {
+  const router = useRouter();
   const { currentCard, players } = useGame();
   const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setIndex(0);
+  }, [players.length, currentCard]);
 
   const handleNextCard = useCallback(() => {
     setIndex((prev) => {
       const nextIndex = prev + 1;
       if (nextIndex >= players.length) {
-        return 0; // or reset to 0 if you want to loop
+        router.replace("/finishedGame");
+        return 0;
       }
       return nextIndex;
     });
-  }, [players.length]);
+  }, [players.length, router]);
+  const [swiped, setSwiped] = useState(false);
+  useEffect(() => {
+    if (swiped) {
+      handleNextCard(); // cambia index
+      translationX.value = 0; // se resetea **antes** del render
+      setSwiped(false);
+    }
+  }, [swiped]);
 
   const translationX = useSharedValue(0);
-  const isAnimating = useSharedValue(false);
   const SlideGesture = Gesture.Pan()
     .onChange((e) => {
       translationX.value = e.translationX;
@@ -48,10 +68,7 @@ export default function Game() {
           isRightSwipe ? SCREEN_WIDTH : -SCREEN_WIDTH,
           { duration: 200 },
           (finished) => {
-            if (finished) {
-              translationX.value = 0;
-              scheduleOnRN(handleNextCard);
-            }
+            scheduleOnRN(setSwiped, true);
           },
         );
       } else {
@@ -88,11 +105,13 @@ export default function Game() {
         <GestureDetector gesture={SlideGesture}>
           <View className="items-center justify-center flex-1">
             {players.slice(index, index + 3).map((player, i) => (
-              <Card
+              <AnimatedCard
                 player={player}
+                currentCard={currentCard!}
                 key={player.id}
                 index={i}
                 animatedStyle={i === 0 ? frontCardStyle : undefined}
+                swiped={swiped}
               />
             ))}
           </View>
@@ -106,14 +125,22 @@ interface CardProps {
   player: Player & { isSpy: boolean };
   index: number;
   animatedStyle: StyleProp<AnimatedStyle<StyleProp<ViewStyle>>>;
+  swiped: boolean;
+  currentCard: Card;
 }
-const Card = ({ player, index, animatedStyle }: CardProps) => {
+const AnimatedCard = ({
+  player,
+  index,
+  animatedStyle,
+  swiped,
+  currentCard,
+}: CardProps) => {
   const rotation = useSharedValue(0);
   const isRotating = useSharedValue(false);
   const TapGesture = Gesture.Tap().onStart(() => {
     if (isRotating.value) return;
     isRotating.value = true;
-    rotation.value = withTiming(rotation.value + 180, { duration: 200 }, () => {
+    rotation.value = withTiming(rotation.value + 180, { duration: 300 }, () => {
       isRotating.value = false;
     });
   });
@@ -133,20 +160,36 @@ const Card = ({ player, index, animatedStyle }: CardProps) => {
       zIndex: isFront ? 2 : 1,
     };
   });
+  useEffect(() => {
+    if (swiped) {
+      rotation.value = 0;
+    }
+  }, [swiped]);
   return (
     <GestureDetector gesture={TapGesture}>
       <View className="absolute w-80 h-1/2" style={{ zIndex: 10 - index }}>
         <Animated.View
-          className="absolute w-full h-full items-center justify-center bg-background-secondary rounded-lg"
+          className="absolute w-full h-full bg-background-secondary rounded-lg border-4 border-onBackground-accent"
           style={[animatedStyle, regularAnimatedStyle]}
         >
-          <CustomText>{player.name}</CustomText>
+          <ImageBackground
+            source={require("@/assets/images/impostor_icon_small_pattern.png")}
+            className="items-center justify-center w-full h-full"
+            resizeMode="repeat"
+            imageClassName="rounded-lg"
+          >
+            <CustomText className="font-medium text-3xl text-center text-onBackground-accent">
+              {player.name}
+            </CustomText>
+          </ImageBackground>
         </Animated.View>
         <Animated.View
-          className="absolute w-full h-full items-center justify-center bg-background-secondary rounded-lg"
+          className="absolute w-full h-full items-center justify-center bg-background-secondary rounded-lg border-4 border-onBackground-accent"
           style={[animatedStyle, flippedAnimatedStyle]}
         >
-          <CustomText>{"la otra parte"}</CustomText>
+          <CustomText className="font-medium text-3xl text-center text-onBackground-secondary">
+            {player.isSpy ? "Eres el impostor!" : currentCard}
+          </CustomText>
         </Animated.View>
       </View>
     </GestureDetector>
