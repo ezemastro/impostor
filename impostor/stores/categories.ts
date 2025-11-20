@@ -1,6 +1,7 @@
 import { INITIAL_CATEGORIES } from "@/constants/categories";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 interface CategoriesStoreType {
   categories: Category[];
@@ -15,6 +16,7 @@ export const useCategoriesStore = create<CategoriesStoreType>()(
     }),
     {
       name: "categories-store",
+      storage: createJSONStorage(() => AsyncStorage),
     },
   ),
 );

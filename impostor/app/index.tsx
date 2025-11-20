@@ -16,6 +16,13 @@ export default function Index() {
         >
           <TextButton>Comenzar Juego</TextButton>
         </Button>
+        <Button
+          onPress={() => {
+            router.push("/game");
+          }}
+        >
+          <TextButton>Probar</TextButton>
+        </Button>
       </View>
     </MainView>
   );

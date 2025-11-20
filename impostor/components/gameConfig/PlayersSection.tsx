@@ -36,6 +36,11 @@ export default function PlayersSection() {
       <View className="flex-row justify-between">
         <CustomText className="text-2xl font-medium">Jugadores:</CustomText>
       </View>
+      <CountControl
+        count={players.length}
+        onAdd={handleAddPlayer}
+        onRemove={handleRemoveLastPlayer}
+      />
       <View className="flex-col gap-2">
         {players.map((player) => (
           <PlayerCard
@@ -52,11 +57,6 @@ export default function PlayersSection() {
           <PlusIcon className="text-onBackground-primary" />
         </Pressable>
       </View>
-      <CountControl
-        count={players.length}
-        onAdd={handleAddPlayer}
-        onRemove={handleRemoveLastPlayer}
-      />
     </Section>
   );
 }
