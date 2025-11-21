@@ -1,3 +1,4 @@
+import { SPECIAL_ROUNDS } from "@/constants/specialRounds";
 import { useCurrentGameStore } from "@/stores/currentGame";
 
 interface NewSpiesSetParams {
@@ -18,8 +19,25 @@ const newSpiesSet = ({ playersCount, spyCount }: NewSpiesSetParams) => {
 export const useRandomSpies = () => {
   const playersCount = useCurrentGameStore((state) => state.players.length);
   const spyCount = useCurrentGameStore((state) => state.spyCount);
-  const getNewSpiesSet = () => {
-    return newSpiesSet({ playersCount, spyCount });
+  const getNewSpiesSet = ({ currentRound }: { currentRound: string }) => {
+    let spyIndices: Set<number>;
+    switch (currentRound) {
+      case SPECIAL_ROUNDS.ALL_SPY:
+        spyIndices = newSpiesSet({ playersCount, spyCount: playersCount });
+        break;
+      case SPECIAL_ROUNDS.EXTRA_SPY:
+        spyIndices = newSpiesSet({ playersCount, spyCount: spyCount + 1 });
+        break;
+      case SPECIAL_ROUNDS.NO_SPY:
+        spyIndices = new Set<number>();
+        break;
+      case SPECIAL_ROUNDS.RANDOM_CARDS:
+        spyIndices = new Set<number>();
+        break;
+      default:
+        spyIndices = newSpiesSet({ playersCount, spyCount });
+    }
+    return spyIndices;
   };
   return { getNewSpiesSet };
 };

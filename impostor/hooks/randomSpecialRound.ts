@@ -8,7 +8,7 @@ export const useRandomSpecialRound = () => {
     const weights = Object.values(specialRounds);
     const totalWeight = Math.max(
       weights.reduce((sum, weight) => sum + weight, 0),
-      100,
+      1,
     );
     const randomValue = Math.random() * totalWeight;
 

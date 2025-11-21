@@ -5,7 +5,6 @@ import { useRandomSpecialRound } from "./randomSpecialRound";
 
 export const useNewRound = () => {
   const cards = useCurrentGameStore((state) => state.cards);
-  const specialRounds = useCurrentGameStore((state) => state.specialRounds);
   const setCurrentRound = useCurrentGameStore((state) => state.setCurrentRound);
   const setCurrentCard = useCurrentGameStore((state) => state.setCurrentCard);
   const setSpyIndices = useCurrentGameStore((state) => state.setSpyIndices);
@@ -14,9 +13,10 @@ export const useNewRound = () => {
   const { getRandomSpecialRound } = useRandomSpecialRound();
 
   const handleNewRound = () => {
-    setCurrentRound(getRandomSpecialRound());
+    const currentRound = getRandomSpecialRound();
+    setCurrentRound(currentRound);
     setCurrentCard(getRandomCard({ cards }));
-    setSpyIndices(getNewSpiesSet());
+    setSpyIndices(getNewSpiesSet({ currentRound }));
   };
   return handleNewRound;
 };

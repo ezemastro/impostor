@@ -25,13 +25,17 @@ import {
 } from "react-native-gesture-handler";
 import CustomText from "@/components/CustomText";
 import { useRouter } from "expo-router";
+import { SPECIAL_ROUNDS } from "@/constants/specialRounds";
+import { useRandomCard } from "@/hooks/randomCard";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
 export default function Game() {
   const router = useRouter();
-  const { currentCard, players } = useGame();
+  const { currentCard, players, currentSpecialRound } = useGame();
+  const { getRandomCard } = useRandomCard();
   const [index, setIndex] = useState(0);
+  console.log(currentSpecialRound);
 
   useEffect(() => {
     setIndex(0);
@@ -100,7 +104,11 @@ export default function Game() {
             {players.slice(index, index + 3).map((player, i) => (
               <AnimatedCard
                 player={player}
-                currentCard={currentCard!}
+                currentCard={
+                  currentSpecialRound === SPECIAL_ROUNDS.RANDOM_CARDS
+                    ? getRandomCard()!
+                    : currentCard!
+                }
                 key={player.id}
                 index={i}
                 animatedStyle={i === 0 ? frontCardStyle : undefined}
