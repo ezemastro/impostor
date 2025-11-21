@@ -13,7 +13,7 @@ export default function Button({
   return (
     <Pressable
       className={
-        "bg-app-primary flex-row p-4 px-6 items-center justify-center rounded-lg min-h-16 " +
+        "bg-app-primary flex-row p-4 px-6 items-center justify-center rounded-lg min-h-16 min-w-80 " +
         (className || "")
       }
       {...props}
