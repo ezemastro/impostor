@@ -29,9 +29,18 @@
       "output": "static",
       "favicon": "./assets/images/impostor_icon.png"
     },
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router"
+    ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "aec0b482-547a-47b7-9353-01b12e0492d8"
+      }
+    },
+    "owner": "ezemastro"
   }
 }
