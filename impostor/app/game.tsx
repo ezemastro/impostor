@@ -9,9 +9,9 @@ import {
   ViewStyle,
 } from "react-native";
 import Animated, {
-  AnimatedProps,
   AnimatedStyle,
   interpolate,
+  SharedValue,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -37,26 +37,20 @@ export default function Game() {
     setIndex(0);
   }, [players.length, currentCard]);
 
-  const handleNextCard = useCallback(() => {
-    setIndex((prev) => {
-      const nextIndex = prev + 1;
-      if (nextIndex >= players.length) {
-        router.replace("/finishedGame");
-        return 0;
-      }
-      return nextIndex;
-    });
-  }, [players.length, router]);
-  const [swiped, setSwiped] = useState(false);
-  useEffect(() => {
-    if (swiped) {
-      handleNextCard(); // cambia index
-      translationX.value = 0; // se resetea **antes** del render
-      setSwiped(false);
-    }
-  }, [swiped]);
-
   const translationX = useSharedValue(0);
+  const rotation = useSharedValue(0);
+
+  const handleNextCard = useCallback(() => {
+    translationX.value = 0;
+    rotation.value = 0;
+    const nextIndex = index + 1;
+    if (nextIndex >= players.length) {
+      router.replace("/finishedGame");
+      return;
+    }
+    setIndex(nextIndex);
+  }, [players.length, router, translationX, rotation, index]);
+
   const SlideGesture = Gesture.Pan()
     .onChange((e) => {
       translationX.value = e.translationX;
@@ -67,8 +61,8 @@ export default function Game() {
         translationX.value = withSpring(
           isRightSwipe ? SCREEN_WIDTH : -SCREEN_WIDTH,
           { duration: 200 },
-          (finished) => {
-            scheduleOnRN(setSwiped, true);
+          () => {
+            scheduleOnRN(handleNextCard);
           },
         );
       } else {
@@ -85,16 +79,15 @@ export default function Game() {
         {
           rotate: `${interpolate(
             translationX.value,
-            [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
-            [-15, 0, 15],
+            [
+              -SCREEN_WIDTH / 2,
+              -SWIPE_THRESHOLD,
+              0,
+              SWIPE_THRESHOLD,
+              SCREEN_WIDTH / 2,
+            ],
+            [-15, -15, 0, 15, 15],
           )}deg`,
-        },
-        {
-          translateY: interpolate(
-            translationX.value,
-            [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
-            [10, 0, 10],
-          ),
         },
       ],
     };
@@ -111,7 +104,7 @@ export default function Game() {
                 key={player.id}
                 index={i}
                 animatedStyle={i === 0 ? frontCardStyle : undefined}
-                swiped={swiped}
+                rotation={rotation}
               />
             ))}
           </View>
@@ -125,17 +118,16 @@ interface CardProps {
   player: Player & { isSpy: boolean };
   index: number;
   animatedStyle: StyleProp<AnimatedStyle<StyleProp<ViewStyle>>>;
-  swiped: boolean;
   currentCard: Card;
+  rotation: SharedValue<number>;
 }
 const AnimatedCard = ({
   player,
   index,
   animatedStyle,
-  swiped,
   currentCard,
+  rotation,
 }: CardProps) => {
-  const rotation = useSharedValue(0);
   const isRotating = useSharedValue(false);
   const TapGesture = Gesture.Tap().onStart(() => {
     if (isRotating.value) return;
@@ -147,30 +139,46 @@ const AnimatedCard = ({
   const regularAnimatedStyle = useAnimatedStyle(() => {
     const isFront = rotation.value % 360 === 0;
     return {
-      transform: [{ rotateY: `${rotation.value}deg` }],
-      backfaceVisibility: "hidden",
+      transform: [
+        {
+          rotateY: `${rotation.value}deg`,
+        },
+        {
+          scale: interpolate(
+            rotation.value % 360,
+            [0, 90, 180, 270, 360],
+            [1, 1.2, 1, 1.2, 1],
+          ),
+        },
+      ],
       zIndex: isFront ? 2 : 1,
     };
   });
   const flippedAnimatedStyle = useAnimatedStyle(() => {
     const isFront = (rotation.value + 180) % 360 === 0;
     return {
-      transform: [{ rotateY: `${rotation.value + 180}deg` }],
-      backfaceVisibility: "hidden",
+      transform: [
+        { rotateY: `${rotation.value + 180}deg` },
+        {
+          scale: interpolate(
+            rotation.value % 360,
+            [0, 90, 180, 270, 360],
+            [1, 1.2, 1, 1.2, 1],
+          ),
+        },
+      ],
       zIndex: isFront ? 2 : 1,
     };
   });
-  useEffect(() => {
-    if (swiped) {
-      rotation.value = 0;
-    }
-  }, [swiped]);
   return (
     <GestureDetector gesture={TapGesture}>
       <View className="absolute w-80 h-1/2" style={{ zIndex: 10 - index }}>
         <Animated.View
           className="absolute w-full h-full bg-background-secondary rounded-lg border-4 border-onBackground-accent"
-          style={[animatedStyle, regularAnimatedStyle]}
+          style={[
+            index === 0 ? [animatedStyle, regularAnimatedStyle] : undefined,
+            { backfaceVisibility: "hidden" },
+          ]}
         >
           <ImageBackground
             source={require("@/assets/images/impostor_icon_small_pattern.png")}
@@ -183,14 +191,20 @@ const AnimatedCard = ({
             </CustomText>
           </ImageBackground>
         </Animated.View>
-        <Animated.View
-          className="absolute w-full h-full items-center justify-center bg-background-secondary rounded-lg border-4 border-onBackground-accent"
-          style={[animatedStyle, flippedAnimatedStyle]}
-        >
-          <CustomText className="font-medium text-3xl text-center text-onBackground-secondary">
-            {player.isSpy ? "Eres el impostor!" : currentCard}
-          </CustomText>
-        </Animated.View>
+        {index === 0 && (
+          <Animated.View
+            className="absolute w-full h-full items-center justify-center bg-background-secondary rounded-lg border-4 border-onBackground-accent"
+            style={[
+              animatedStyle,
+              flippedAnimatedStyle,
+              { backfaceVisibility: "hidden" },
+            ]}
+          >
+            <CustomText className="font-medium text-3xl text-center text-onBackground-secondary">
+              {player.isSpy ? "Eres el impostor!" : currentCard}
+            </CustomText>
+          </Animated.View>
+        )}
       </View>
     </GestureDetector>
   );

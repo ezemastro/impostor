@@ -13,6 +13,8 @@ interface CurrentGameStore {
   setSpyCount: (spyCount: number) => void;
   currentCard: Card | null;
   setCurrentCard: (currentCard: Card | null) => void;
+  spyIndices: Set<number>;
+  setSpyIndices: (spyIndices: Set<number>) => void;
 }
 
 export const useCurrentGameStore = create<CurrentGameStore>()(
@@ -30,6 +32,8 @@ export const useCurrentGameStore = create<CurrentGameStore>()(
       currentCard: null,
       setCurrentCard: (currentCard: Card | null) =>
         set(() => ({ currentCard })),
+      spyIndices: new Set<number>(),
+      setSpyIndices: (spyIndices: Set<number>) => set(() => ({ spyIndices })),
     }),
     {
       name: "current-game-store",
