@@ -18,10 +18,11 @@ export default function Index() {
         </Button>
         <Button
           onPress={() => {
-            router.push("/game");
+            router.push("/categories");
           }}
+          className="bg-app-secondary"
         >
-          <TextButton>Probar</TextButton>
+          <TextButton>Editar categorías</TextButton>
         </Button>
       </View>
     </MainView>

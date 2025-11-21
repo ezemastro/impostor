@@ -20,6 +20,16 @@ export default function RootLayout() {
         name="gameConfig"
         options={{ title: "Configuración del Juego" }}
       />
+      <Stack.Screen name="game" options={{ title: "" }} />
+      <Stack.Screen
+        name="finishedGame"
+        options={{ title: "Juego Terminado" }}
+      />
+      <Stack.Screen name="categories" options={{ title: "Categorías" }} />
+      <Stack.Screen
+        name="categories/[categoryId]"
+        options={{ title: "Editar Categoría" }}
+      />
     </Stack>
   );
 }
