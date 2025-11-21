@@ -45,7 +45,7 @@ export default function CategorySelection() {
             ...category,
             selected: selectedCategories.some((cat) => cat.id === category.id),
           }))}
-          onToggle={handleToggleCategory}
+          onPress={handleToggleCategory}
         />
         <View className="p-4 absolute bottom-10 w-full">
           <Button onPress={handleSubmit}>

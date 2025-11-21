@@ -4,10 +4,10 @@ import CategoryCard from "./CategoryCard";
 
 export default function CategoryList({
   categories,
-  onToggle,
+  onPress,
 }: {
-  categories: SelectableCategoryInfo[];
-  onToggle: (categoryId: string) => void;
+  categories: (CategoryInfo | SelectableCategoryInfo)[];
+  onPress: (categoryId: string) => void;
 }) {
   return (
     <FlatList
@@ -19,7 +19,7 @@ export default function CategoryList({
       renderItem={({ item: category }) => (
         <CategoryCard
           category={category}
-          onPress={() => onToggle(category.id)}
+          onPress={() => onPress(category.id)}
         />
       )}
     />

@@ -41,7 +41,7 @@ export default function CategoriesSelectionModal({
             ...category,
             selected: selectedCategoryIds.includes(category.id),
           }))}
-          onToggle={onToggle}
+          onPress={onToggle}
         />
         <Button
           onPress={() =>

@@ -3,7 +3,7 @@ import React from "react";
 import CustomText from "./CustomText";
 
 interface CategoryCardProps extends PressableProps {
-  category: SelectableCategoryInfo;
+  category: CategoryInfo | SelectableCategoryInfo;
 }
 
 export default function CategoryCard({
@@ -15,7 +15,7 @@ export default function CategoryCard({
       {...props}
       className={`
         p-4 rounded-lg border border-onBackground-accent flex-grow items-center justify-center w-1/2 flex-shrink 
-        ${category.selected ? "bg-app-secondary" : "bg-transparent"}
+        ${"selected" in category && category.selected ? "bg-app-secondary" : "bg-transparent"}
       `}
     >
       <CustomText className="text-xl font-medium">{category.name}</CustomText>

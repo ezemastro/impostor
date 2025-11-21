@@ -19,12 +19,13 @@ export default function FinishedGame() {
           <TextButton>Nuevo juego</TextButton>
         </Button>
         <Button
+        className="bg-app-secondary"
           onPress={() => {
             handleGameReset();
             router.push("/game");
           }}
         >
-          <TextButton>Siguiente ronda</TextButton>
+          <TextButton >Siguiente ronda</TextButton>
         </Button>
       </View>
     </MainView>
