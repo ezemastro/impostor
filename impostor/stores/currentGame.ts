@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SPECIAL_ROUNDS } from "@/constants/specialRounds";
 
 interface CurrentGameStore {
   categories: CategoryInfo[];
@@ -15,6 +16,18 @@ interface CurrentGameStore {
   setCurrentCard: (currentCard: Card | null) => void;
   spyIndices: Set<number>;
   setSpyIndices: (spyIndices: Set<number>) => void;
+  specialRounds: Record<
+    (typeof SPECIAL_ROUNDS)[keyof typeof SPECIAL_ROUNDS],
+    number
+  >;
+  setSpecialRounds: (
+    specialRounds: Record<
+      (typeof SPECIAL_ROUNDS)[keyof typeof SPECIAL_ROUNDS],
+      number
+    >,
+  ) => void;
+  currentRound: (typeof SPECIAL_ROUNDS)[keyof typeof SPECIAL_ROUNDS] | "normal";
+  setCurrentRound: (currentRound: string) => void;
 }
 
 export const useCurrentGameStore = create<CurrentGameStore>()(
@@ -34,6 +47,20 @@ export const useCurrentGameStore = create<CurrentGameStore>()(
         set(() => ({ currentCard })),
       spyIndices: new Set<number>(),
       setSpyIndices: (spyIndices: Set<number>) => set(() => ({ spyIndices })),
+      specialRounds: {
+        [SPECIAL_ROUNDS.EXTRA_SPY]: 0.1,
+        [SPECIAL_ROUNDS.NO_SPY]: 0.1,
+        [SPECIAL_ROUNDS.ALL_SPY]: 0.1,
+        [SPECIAL_ROUNDS.RANDOM_CARDS]: 0.1,
+      },
+      setSpecialRounds: (
+        specialRounds: Record<
+          (typeof SPECIAL_ROUNDS)[keyof typeof SPECIAL_ROUNDS],
+          number
+        >,
+      ) => set(() => ({ specialRounds })),
+      currentRound: "normal",
+      setCurrentRound: (currentRound: string) => set(() => ({ currentRound })),
     }),
     {
       name: "current-game-store",

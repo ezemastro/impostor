@@ -1,6 +1,7 @@
 import CategoriesSection from "@/components/gameConfig/CategoriesSection";
 import InitGameButton from "@/components/gameConfig/InitGameButton";
 import PlayersSection from "@/components/gameConfig/PlayersSection";
+import SpecialRoundSelection from "@/components/gameConfig/SpecialRoundsSection";
 import SpyCountSection from "@/components/gameConfig/SpyCountSection";
 import MainView from "@/components/MainView";
 import { FlatList } from "react-native";
@@ -28,6 +29,10 @@ export default function GameConfig() {
       component: <CategoriesSection />,
     },
     {
+      key: "specialRounds",
+      component: <SpecialRoundSelection />,
+    },
+    {
       key: "submit",
       component: <InitGameButton />,
     },
@@ -40,7 +45,7 @@ export default function GameConfig() {
         renderItem={({ item }) => <>{item.component}</>}
         className="p-4"
         contentContainerClassName="gap-4"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
       />
     </MainView>
   );

@@ -21,5 +21,5 @@ export const useRandomSpies = () => {
   const getNewSpiesSet = () => {
     return newSpiesSet({ playersCount, spyCount });
   };
-  return getNewSpiesSet;
+  return { getNewSpiesSet };
 };
