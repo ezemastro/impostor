@@ -1,11 +1,11 @@
 import { useGetAllCategories } from "@/hooks/categories";
-import { useState } from "react";
 import { Modal, ModalProps, Pressable, View } from "react-native";
 import Title from "../Title";
 import CategoryList from "../CategoryList";
 import Button from "../Button";
 import TextButton from "../TextButton";
 import { CrossIcon } from "../Icons";
+import { useCurrentGameStore } from "@/stores/currentGame";
 
 interface Props extends ModalProps {
   onSubmit: (selectedCategories: CategoryInfo[]) => void;
@@ -17,16 +17,19 @@ export default function CategoriesSelectionModal({
   ...props
 }: Props) {
   const categories = useGetAllCategories();
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
+  const selectedCategories = useCurrentGameStore((state) => state.categories);
+  const setSelectedCategories = useCurrentGameStore(
+    (state) => state.setCategories,
+  );
 
-  const onToggle = (categoryId: string) => {
-    setSelectedCategoryIds((prev) => {
-      if (prev.includes(categoryId)) {
-        return prev.filter((id) => id !== categoryId);
-      } else {
-        return [...prev, categoryId];
-      }
-    });
+  const onToggle = (category: CategoryInfo) => {
+    if (selectedCategories.some((cat) => cat.id === category.id)) {
+      setSelectedCategories(
+        selectedCategories.filter((cat) => cat.id !== category.id),
+      );
+    } else {
+      setSelectedCategories([...selectedCategories, category]);
+    }
   };
 
   return (
@@ -39,7 +42,7 @@ export default function CategoriesSelectionModal({
         <CategoryList
           categories={categories.map((category) => ({
             ...category,
-            selected: selectedCategoryIds.includes(category.id),
+            selected: selectedCategories.some((cat) => cat.id === category.id),
           }))}
           onPress={onToggle}
         />
@@ -47,7 +50,7 @@ export default function CategoriesSelectionModal({
           onPress={() =>
             onSubmit(
               categories.filter((category) =>
-                selectedCategoryIds.includes(category.id),
+                selectedCategories.some((cat) => cat.id === category.id),
               ),
             )
           }

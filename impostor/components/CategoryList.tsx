@@ -7,7 +7,7 @@ export default function CategoryList({
   onPress,
 }: {
   categories: (CategoryInfo | SelectableCategoryInfo)[];
-  onPress: (categoryId: string) => void;
+  onPress: (category: CategoryInfo | SelectableCategoryInfo) => void;
 }) {
   return (
     <FlatList
@@ -17,10 +17,7 @@ export default function CategoryList({
       numColumns={2}
       columnWrapperClassName="gap-2"
       renderItem={({ item: category }) => (
-        <CategoryCard
-          category={category}
-          onPress={() => onPress(category.id)}
-        />
+        <CategoryCard category={category} onPress={() => onPress(category)} />
       )}
     />
   );
