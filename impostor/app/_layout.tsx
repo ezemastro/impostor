@@ -25,7 +25,7 @@ export default function RootLayout() {
         name="finishedGame"
         options={{ title: "Juego Terminado" }}
       />
-      <Stack.Screen name="categories" options={{ title: "Categorías" }} />
+      <Stack.Screen name="categories/index" options={{ title: "Categorías" }} />
       <Stack.Screen
         name="categories/[categoryId]"
         options={{ title: "Editar Categoría" }}
