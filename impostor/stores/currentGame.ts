@@ -48,10 +48,11 @@ export const useCurrentGameStore = create<CurrentGameStore>()(
       spyIndices: new Set<number>(),
       setSpyIndices: (spyIndices: Set<number>) => set(() => ({ spyIndices })),
       specialRounds: {
-        [SPECIAL_ROUNDS.EXTRA_SPY]: 0.1,
-        [SPECIAL_ROUNDS.NO_SPY]: 0.1,
-        [SPECIAL_ROUNDS.ALL_SPY]: 0.1,
-        [SPECIAL_ROUNDS.RANDOM_CARDS]: 0.1,
+        [SPECIAL_ROUNDS.EXTRA_SPY]: 0.05,
+        [SPECIAL_ROUNDS.NO_SPY]: 0.05,
+        [SPECIAL_ROUNDS.ALL_SPY]: 0.05,
+        [SPECIAL_ROUNDS.RANDOM_CARDS]: 0.01,
+        [SPECIAL_ROUNDS.PLAYER_CARD]: 0.01,
       },
       setSpecialRounds: (
         specialRounds: Record<
