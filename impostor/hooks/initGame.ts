@@ -11,11 +11,13 @@ export const useGameInit = () => {
 
   // Obtener las cartas seleccionadas
   const categories = useCategoriesStore((state) => state.categories);
-  const cards = categories.flatMap((category) =>
-    selectedCategories.some((sel) => sel.id === category.id)
-      ? category.cards
-      : [],
-  );
+  const cards = categories
+    .flatMap((category) =>
+      selectedCategories.some((sel) => sel.id === category.id)
+        ? category.cards
+        : [],
+    )
+    .filter((card) => !!card);
 
   const handleInitGame = () => {
     setCards(cards);
