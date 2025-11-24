@@ -5,7 +5,6 @@ import TextButton from "@/components/TextButton";
 import { useGame } from "@/hooks/game";
 import { useGameReset } from "@/hooks/gameReset";
 import { useRouter } from "expo-router";
-import { useState } from "react";
 import { View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -18,13 +17,14 @@ export default function FinishedGame() {
   const handleGameReset = useGameReset();
   const { players } = useGame();
   const rotation = useSharedValue(0);
-  const [opacity, setOpacity] = useState(1);
+  const opacity = useSharedValue(1);
 
   const regularAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotateY: `${rotation.value}deg` }],
   }));
   const flippedAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotateY: `${rotation.value + 180}deg` }],
+    opacity: opacity.value,
   }));
   return (
     <MainView>
@@ -40,7 +40,7 @@ export default function FinishedGame() {
               }}
               className="bg-app-secondary h-20"
             >
-              <TextButton className="font-normal text-3xl" style={{ opacity }}>
+              <TextButton className="font-normal text-3xl">
                 Revelar impostor
               </TextButton>
             </Button>
@@ -59,7 +59,7 @@ export default function FinishedGame() {
         </View>
         <Button
           onPress={() => {
-            router.push("/gameConfig");
+            router.replace("/gameConfig");
           }}
           className="mt-4"
         >
@@ -68,9 +68,11 @@ export default function FinishedGame() {
         <Button
           className="bg-app-secondary"
           onPress={() => {
-            setOpacity(0);
-            handleGameReset();
-            router.push("/game");
+            opacity.value = 0;
+            setTimeout(() => {
+              handleGameReset();
+              router.replace("/game");
+            }, 0);
           }}
         >
           <TextButton>Siguiente ronda</TextButton>
