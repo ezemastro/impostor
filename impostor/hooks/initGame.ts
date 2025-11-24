@@ -7,6 +7,7 @@ export const useGameInit = () => {
   const router = useRouter();
   const selectedCategories = useCurrentGameStore((state) => state.categories);
   const setCards = useCurrentGameStore((state) => state.setCards);
+  const resetUsedCards = useCurrentGameStore((state) => state.resetUsedCards);
   const handleNewRound = useNewRound();
 
   // Obtener las cartas seleccionadas
@@ -20,8 +21,9 @@ export const useGameInit = () => {
     .filter((card) => !!card);
 
   const handleInitGame = () => {
+    resetUsedCards();
     setCards(cards);
-    handleNewRound();
+    handleNewRound({ isNew: true, cards });
     router.push("/game");
   };
 
