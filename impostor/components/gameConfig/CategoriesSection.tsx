@@ -14,6 +14,14 @@ export default function CategoriesSection() {
   );
   const [isCategorySelectionModalVisible, setIsCategorySelectionModalVisible] =
     useState(false);
+
+  const createHandleUnselectCategory =
+    (categoryToUnselect: CategoryInfo) => () => {
+      const newSelectedCategories = selectedCategories.filter(
+        (category) => category.id !== categoryToUnselect.id,
+      );
+      setSelectedCategories(newSelectedCategories);
+    };
   return (
     <>
       <CategoriesSelectionModal
@@ -31,9 +39,11 @@ export default function CategoriesSection() {
         <FlatList
           data={selectedCategories}
           keyExtractor={(item) => item.id}
-          // TODO - Agregar botón para eliminar una categoría
           renderItem={({ item: category }) => (
-            <CategoryCard category={{ ...category, selected: true }} />
+            <CategoryCard
+              category={{ ...category, selected: true }}
+              onDelete={createHandleUnselectCategory(category)}
+            />
           )}
           contentContainerClassName="gap-2"
           ItemSeparatorComponent={() => <View className="h-2" />}
