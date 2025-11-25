@@ -1,11 +1,12 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/javascript-node
 {
-  "name": "Node.js",
+  "name": "impostor",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "overrideCommand": "none",
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
 
@@ -24,8 +25,26 @@
         "esbenp.prettier-vscode"
       ]
     }
-  }
+  },
+   "mounts": [
+    // ANDROID SDK real de tu WSL
+    "source=/home/mastr/Android/Sdk,target=/opt/android-sdk,type=bind,consistency=cached",
 
-  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-  // "remoteUser": "root"
+    // Credenciales de Android
+    "source=/home/mastr/.android,target=/home/node/.android,type=bind",
+
+    // Config de EAS (tokens, profiles)
+    "source=/home/mastr/.config/eas,target=/home/node/.config/eas,type=bind",
+
+    // SOLO el binario del EAS global de WSL
+    "source=/usr/local/bin/eas,target=/usr/local/bin/eas,type=bind"
+  ],
+
+  "containerEnv": {
+    "ANDROID_HOME": "/opt/android-sdk",
+    "ANDROID_SDK_ROOT": "/opt/android-sdk"
+    // "PATH": "/opt/android-sdk/platform-tools:/opt/android-sdk/emulator:/opt/android-sdk/cmdline-tools/latest/bin:${PATH}"
+  },
+
+  "remoteUser": "node"
 }

@@ -1,24 +1,23 @@
 FROM mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm
 
-# Instalar Java
-RUN apt-get update && apt-get install -y openjdk-17-jdk wget unzip
+# Check if the user 'node' already exists (most official node images have it)
+# If it doesn't, create it with a specific UID/GID (e.g., 1000:1000)
+ARG USER_UID=1000
+ARG USER_GID=1000
 
-# Variables
-ENV ANDROID_HOME=/usr/local/android-sdk
-ENV ANDROID_SDK_ROOT=/usr/local/android-sdk
-ENV PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+RUN if ! getent passwd node ; then \
+    groupadd --gid $USER_GID node ; \
+    useradd -m --uid $USER_UID --gid $USER_GID --shell /bin/bash node ; \
+fi
+
+# Set the default user for subsequent commands (optional, but good practice)
+USER node
+
+
+RUN sudo apt-get update && sudo apt-get install -y openjdk-17-jdk
+
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV PATH="/opt/android-sdk/platform-tools:/opt/android-sdk/emulator:/opt/android-sdk/cmdline-tools/latest/bin:${PATH}"
 
-# Instalar cmdline-tools
-RUN mkdir -p $ANDROID_HOME/cmdline-tools \
-  && cd $ANDROID_HOME/cmdline-tools \
-  && wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip \
-  && unzip commandlinetools-linux-11076708_latest.zip \
-  && rm commandlinetools-linux-11076708_latest.zip \
-  && mv cmdline-tools latest
 
-# Aceptar licencias
-RUN yes | sdkmanager --licenses
-
-# Instalar SDK necesarios
-RUN sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+CMD ["bash", "-c", "while true; do sleep 10000; done"]

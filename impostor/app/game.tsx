@@ -180,7 +180,7 @@ const AnimatedCard = ({
   });
   return (
     <GestureDetector gesture={TapGesture}>
-      <View className="absolute w-80 h-1/2" style={{ zIndex: 10 - index }}>
+      <View className="absolute w-96 h-3/5" style={{ zIndex: 10 - index }}>
         <Animated.View
           className="absolute w-full h-full bg-background-secondary rounded-lg border-4 border-onBackground-accent"
           style={[
