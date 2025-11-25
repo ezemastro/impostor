@@ -30,6 +30,7 @@ export default function RootLayout() {
         name="categories/[categoryId]"
         options={{ title: "Editar Categoría" }}
       />
+      <Stack.Screen name="config" options={{ title: "Configuración" }} />
     </Stack>
   );
 }

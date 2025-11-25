@@ -6,6 +6,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 interface CategoriesStoreType {
   categories: Category[];
   setCategories: (categories: Category[]) => void;
+  resetCategories: () => void;
 }
 
 export const useCategoriesStore = create<CategoriesStoreType>()(
@@ -13,6 +14,7 @@ export const useCategoriesStore = create<CategoriesStoreType>()(
     (set) => ({
       categories: INITIAL_CATEGORIES,
       setCategories: (categories: Category[]) => set(() => ({ categories })),
+      resetCategories: () => set(() => ({ categories: INITIAL_CATEGORIES })),
     }),
     {
       name: "categories-store",

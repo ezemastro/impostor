@@ -31,7 +31,8 @@
       "favicon": "./assets/images/impostor_icon_v2.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-mail-composer"
     ],
     "experiments": {
       "typedRoutes": true
