@@ -28,7 +28,12 @@ export default function ConfirmationModal({
           <CrossIcon className="text-onBackground-primary" />
         </Pressable>
         <Title className="text-center">{title}</Title>
-        <CustomText className="text-onBackground-secondary">
+        <CustomText
+          className={
+            "text-onBackground-secondary " +
+            (description.length < 100 ? "text-center" : "")
+          }
+        >
           {description}
         </CustomText>
         <View className="flex-row justify-between mt-2">
