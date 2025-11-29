@@ -1,4 +1,5 @@
 import { PressableProps, Pressable } from "react-native";
+import { twMerge } from "tailwind-merge";
 import React from "react";
 
 interface ButtonProps {
@@ -13,11 +14,11 @@ export default function Button({
 }: ButtonProps & PressableProps) {
   return (
     <Pressable
-      className={
+      className={twMerge(
         "bg-app-primary flex-row p-4 px-6 items-center justify-center rounded-lg min-h-16 min-w-80 " +
-        (disabled ? "opacity-50" : "opacity-100 ") +
-        (className || "")
-      }
+          (disabled ? "opacity-50" : "opacity-100 ") +
+          (className || ""),
+      )}
       {...props}
     >
       {children}
