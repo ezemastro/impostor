@@ -34,6 +34,7 @@ interface CurrentGameStore {
   usedCards: Card[];
   pushUsedCard: (card: Card) => void;
   resetUsedCards: () => void;
+  resetSpecialRounds: () => void;
 }
 
 export const useCurrentGameStore = create<CurrentGameStore>()(
@@ -60,6 +61,8 @@ export const useCurrentGameStore = create<CurrentGameStore>()(
           number
         >,
       ) => set(() => ({ specialRounds })),
+      resetSpecialRounds: () =>
+        set(() => ({ specialRounds: SPECIAL_ROUNDS_INITIAL_VALUES })),
       currentRound: "normal",
       setCurrentRound: (currentRound: string) => set(() => ({ currentRound })),
       usedCards: [],

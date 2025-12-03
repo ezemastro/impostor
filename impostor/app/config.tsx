@@ -11,10 +11,14 @@ import ConfirmationModal from "@/components/ConfirmationModal";
 import { useCategoriesStore } from "@/stores/categories";
 import * as MailComposer from "expo-mail-composer";
 import { CONTACT_EMAIL } from "@/constants/contact";
+import { useCurrentGameStore } from "@/stores/currentGame";
 
 export default function ConfigPage() {
   const insets = useSafeAreaInsets();
   const resetCategories = useCategoriesStore((state) => state.resetCategories);
+  const resetSpecialRounds = useCurrentGameStore(
+    (state) => state.resetSpecialRounds,
+  );
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const [isMailModalVisible, setIsMailModalVisible] = useState(false);
   const [isMailAvailable, setIsMailAvailable] = useState(false);
@@ -64,6 +68,11 @@ export default function ConfigPage() {
             <Button className="bg-app-secondary">
               <TextButton onPress={() => setIsCategoryModalVisible(true)}>
                 Restablecer categorías
+              </TextButton>
+            </Button>
+            <Button className="bg-app-secondary">
+              <TextButton onPress={resetSpecialRounds}>
+                Restablecer rondas especiales
               </TextButton>
             </Button>
           </View>
