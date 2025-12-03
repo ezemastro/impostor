@@ -8,7 +8,10 @@ import {
 import Section from "../Section";
 import CustomText from "../CustomText";
 import { useCurrentGameStore } from "@/stores/currentGame";
-import { SPECIAL_ROUNDS_TITLES } from "@/constants/specialRounds";
+import {
+  SPECIAL_ROUNDS_INITIAL_VALUES,
+  SPECIAL_ROUNDS_TITLES,
+} from "@/constants/specialRounds";
 import { useState } from "react";
 import Button from "../Button";
 import TextButton from "../TextButton";
@@ -63,7 +66,13 @@ export default function SpecialRoundSelection() {
                 ]
               }
             </CustomText>
-            <View className="flex-row items-center justify-center">
+            <View className="flex-row items-stretch justify-center">
+              <Pressable
+                className="bg-app-secondary rounded mx-4 justify-center w-16 border border-onBackground-accent"
+                onPress={() => setInputValue("0")}
+              >
+                <CustomText className="text-center text-lg">Min.</CustomText>
+              </Pressable>
               <TextInput
                 className="bg-background-primary rounded border border-onBackground-accent py-2 w-16 text-xl h-12 text-onBackground-primary text-center"
                 value={inputValue}
@@ -71,7 +80,21 @@ export default function SpecialRoundSelection() {
                 keyboardType="numeric"
                 maxLength={3}
               />
-              <CustomText className="text-xl">/100</CustomText>
+              <CustomText className="text-xl my-auto">/100</CustomText>
+              <Pressable
+                className="bg-app-secondary rounded mx-4 justify-center w-16 border border-onBackground-accent"
+                onPress={() =>
+                  setInputValue(
+                    (
+                      SPECIAL_ROUNDS_INITIAL_VALUES[
+                        Object.keys(selectedSpecialRound || {})[0]
+                      ] * 100
+                    ).toString(),
+                  )
+                }
+              >
+                <CustomText className="text-center text-lg">Reset</CustomText>
+              </Pressable>
             </View>
             <Button onPress={handleSubmit}>
               <TextButton>Confirmar</TextButton>
