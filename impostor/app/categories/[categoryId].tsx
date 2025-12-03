@@ -5,8 +5,9 @@ import {
   Pressable,
   KeyboardAvoidingView,
 } from "react-native";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useLocalSearchParams } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 import MainView from "@/components/MainView";
 import { useCategoriesStore } from "@/stores/categories";
 import CustomText from "@/components/CustomText";
@@ -22,19 +23,28 @@ export default function CategoryPage() {
   const category = categories.find((cat) => cat.id === categoryId);
 
   const setCategories = useCategoriesStore((state) => state.setCategories);
-  const [editing, setEditing] = useState({ index: -1, text: "" });
   const [multipleText, setMultipleText] = useState("");
-  const handleModifyCard = (oldText: string) => {
-    if (!category) return;
-    const updatedCards = category.cards.map((card) =>
-      card === oldText ? editing.text : card,
-    );
-    setCategories(
-      categories.map((cat) =>
-        cat.id === categoryId ? { ...cat, cards: updatedCards } : cat,
-      ),
-    );
-  };
+  const pendingChanges = useRef<Map<number, string>>(new Map());
+
+  useFocusEffect(() => {
+    return () => {
+      // Cuando se pierde el foco (navegación hacia atrás), guardar cambios pendientes
+      if (pendingChanges.current.size > 0 && category) {
+        const updatedCards = category.cards.map((card, i) =>
+          pendingChanges.current.has(i)
+            ? pendingChanges.current.get(i)!.trim()
+            : card,
+        );
+        setCategories(
+          categories.map((cat) =>
+            cat.id === categoryId ? { ...cat, cards: updatedCards } : cat,
+          ),
+        );
+        pendingChanges.current.clear();
+      }
+    };
+  });
+
   const handleAddCard = () => {
     if (!category) return;
     const updatedCards = [...category.cards, ""];
@@ -76,6 +86,26 @@ export default function CategoryPage() {
     setMultipleText("");
   };
 
+  const handleModifyCard = (index: number, newCard: string) => {
+    if (!category) return;
+    const newCardText = newCard.trim();
+    const updatedCards = category.cards.map((card, i) =>
+      i === index ? newCardText : card,
+    );
+    setCategories(
+      categories.map((cat) =>
+        cat.id === categoryId ? { ...cat, cards: updatedCards } : cat,
+      ),
+    );
+    // Limpiar del mapa de cambios pendientes
+    pendingChanges.current.delete(index);
+  };
+
+  const handleCardTextChange = (index: number, text: string) => {
+    // Guardar en el ref sin re-renderizar
+    pendingChanges.current.set(index, text);
+  };
+
   return (
     <MainView>
       <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
@@ -87,10 +117,10 @@ export default function CategoryPage() {
             <View className="px-4 py-1 bg-background-secondary rounded border border-onBackground-accent flex-row items-center">
               <TextInput
                 className="text-lg text-onBackground-primary flex-grow"
-                value={editing.index === index ? editing.text : item}
-                onChangeText={(text) => setEditing({ index, text })}
-                onEndEditing={() => {
-                  handleModifyCard(item);
+                defaultValue={item}
+                onChangeText={(text) => handleCardTextChange(index, text)}
+                onEndEditing={(e) => {
+                  handleModifyCard(index, e.nativeEvent.text);
                 }}
               />
               <Pressable onPress={() => handleDeleteCard(index)}>
