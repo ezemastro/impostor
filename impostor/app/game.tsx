@@ -35,7 +35,6 @@ export default function Game() {
   const { currentCard, players, currentSpecialRound } = useGame();
   const { getRandomCard } = useRandomCard();
   const [index, setIndex] = useState(0);
-  console.log(currentSpecialRound);
 
   useEffect(() => {
     setIndex(0);
