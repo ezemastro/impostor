@@ -78,7 +78,7 @@ export default function CategoryPage() {
 
   return (
     <MainView>
-      <KeyboardAvoidingView>
+      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
         <FlatList
           data={category?.cards}
           keyExtractor={(item, index) => item + index}
