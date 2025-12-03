@@ -4,7 +4,7 @@ import PlayersSection from "@/components/gameConfig/PlayersSection";
 import SpecialRoundSelection from "@/components/gameConfig/SpecialRoundsSection";
 import SpyCountSection from "@/components/gameConfig/SpyCountSection";
 import MainView from "@/components/MainView";
-import { FlatList } from "react-native";
+import { FlatList, KeyboardAvoidingView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface SectionType {
@@ -39,14 +39,16 @@ export default function GameConfig() {
   ];
   return (
     <MainView>
-      <FlatList
-        data={sections}
-        keyExtractor={(item) => item.key}
-        renderItem={({ item }) => <>{item.component}</>}
-        className="p-4"
-        contentContainerClassName="gap-4"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
-      />
+      <KeyboardAvoidingView behavior="padding" className="flex-1">
+        <FlatList
+          data={sections}
+          keyExtractor={(item) => item.key}
+          renderItem={({ item }) => <>{item.component}</>}
+          className="p-4"
+          contentContainerClassName="gap-4"
+          contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
+        />
+      </KeyboardAvoidingView>
     </MainView>
   );
 }
