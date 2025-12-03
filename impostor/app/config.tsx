@@ -12,6 +12,7 @@ import { useCategoriesStore } from "@/stores/categories";
 import * as MailComposer from "expo-mail-composer";
 import { CONTACT_EMAIL } from "@/constants/contact";
 import { useCurrentGameStore } from "@/stores/currentGame";
+import { showNativeToast } from "@/utils/showNativeToast";
 
 export default function ConfigPage() {
   const insets = useSafeAreaInsets();
@@ -29,33 +30,43 @@ export default function ConfigPage() {
     });
   }, []);
 
+  const handleMailPress = () => {
+    if (isMailAvailable) {
+      MailComposer.composeAsync({
+        subject: "Impostor - Reporte de bug / Sugerencia",
+        recipients: [CONTACT_EMAIL],
+      });
+    } else {
+      Linking.openURL(`mailto:${CONTACT_EMAIL}`);
+    }
+    setIsMailModalVisible(false);
+  };
+
+  const handleResetSpecialRounds = () => {
+    resetSpecialRounds();
+    showNativeToast("Rondas especiales restablecidas");
+  };
+
+  const handleResetCategories = () => {
+    resetCategories();
+    setIsCategoryModalVisible(false);
+    showNativeToast("Categorías restablecidas");
+  };
+
   return (
     <>
       <Stack.Screen options={{ headerRight: undefined }} />
       <ConfirmationModal
         visible={isCategoryModalVisible}
         onClose={() => setIsCategoryModalVisible(false)}
-        onConfirm={() => {
-          resetCategories();
-          setIsCategoryModalVisible(false);
-        }}
+        onConfirm={handleResetCategories}
         title="Restablecer categorías"
         description="¿Estás seguro de que deseas restablecer las categorías a sus valores predeterminados? Se perderán las categorías que hayas creado o modificado."
       />
       <ConfirmationModal
         visible={isMailModalVisible}
         onClose={() => setIsMailModalVisible(false)}
-        onConfirm={() => {
-          if (isMailAvailable) {
-            MailComposer.composeAsync({
-              subject: "Impostor - Reporte de bug / Sugerencia",
-              recipients: [CONTACT_EMAIL],
-            });
-          } else {
-            Linking.openURL(`mailto:${CONTACT_EMAIL}`);
-          }
-          setIsMailModalVisible(false);
-        }}
+        onConfirm={handleMailPress}
         title="Enviar correo"
         description={`Se abrirá tu aplicación de correo predeterminada para enviar un mensaje a ${CONTACT_EMAIL}.`}
       />
@@ -71,7 +82,7 @@ export default function ConfigPage() {
               </TextButton>
             </Button>
             <Button className="bg-app-secondary">
-              <TextButton onPress={resetSpecialRounds}>
+              <TextButton onPress={handleResetSpecialRounds}>
                 Restablecer rondas especiales
               </TextButton>
             </Button>
