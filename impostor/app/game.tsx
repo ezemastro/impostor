@@ -100,7 +100,7 @@ export default function Game() {
     <MainView>
       <GestureHandlerRootView>
         <GestureDetector gesture={SlideGesture}>
-          <View className="items-center justify-center flex-1">
+          <View className="items-center justify-center flex-1 mb-24">
             {players.slice(index, index + 3).map((player, i) => (
               <AnimatedCard
                 player={player}
@@ -180,7 +180,7 @@ const AnimatedCard = ({
   });
   return (
     <GestureDetector gesture={TapGesture}>
-      <View className="absolute w-96 h-3/5" style={{ zIndex: 10 - index }}>
+      <View className="absolute w-96 h-2/3" style={{ zIndex: 10 - index }}>
         <Animated.View
           className="absolute w-full h-full bg-background-secondary rounded-lg border-4 border-onBackground-accent"
           style={[
@@ -194,7 +194,7 @@ const AnimatedCard = ({
             resizeMode="repeat"
             imageClassName="rounded-lg"
           >
-            <CustomText className="font-medium text-3xl text-center text-onBackground-accent">
+            <CustomText className="font-medium text-3xl text-center text-onBackground-secondary">
               {player.name}
             </CustomText>
           </ImageBackground>
@@ -208,7 +208,14 @@ const AnimatedCard = ({
               { backfaceVisibility: "hidden" },
             ]}
           >
-            <CustomText className="font-medium text-3xl text-center text-onBackground-secondary">
+            <CustomText
+              className={
+                "font-medium text-3xl text-center " +
+                (player.isSpy
+                  ? "text-onBackground-alert"
+                  : "text-onBackground-primary")
+              }
+            >
               {player.isSpy ? "Eres el impostor!" : currentCard}
             </CustomText>
           </Animated.View>
