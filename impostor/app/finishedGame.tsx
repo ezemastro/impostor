@@ -58,15 +58,7 @@ export default function FinishedGame() {
           </Animated.View>
         </View>
         <Button
-          onPress={() => {
-            router.replace("/gameConfig");
-          }}
           className="mt-4"
-        >
-          <TextButton>Nuevo juego</TextButton>
-        </Button>
-        <Button
-          className="bg-app-secondary"
           onPress={() => {
             opacity.value = 0;
             setTimeout(() => {
@@ -76,6 +68,14 @@ export default function FinishedGame() {
           }}
         >
           <TextButton>Siguiente ronda</TextButton>
+        </Button>
+        <Button
+          onPress={() => {
+            router.replace("/gameConfig");
+          }}
+          className="bg-app-secondary mb-4"
+        >
+          <TextButton>Nuevo juego</TextButton>
         </Button>
       </View>
     </MainView>
