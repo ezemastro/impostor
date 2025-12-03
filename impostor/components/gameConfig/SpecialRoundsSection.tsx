@@ -85,27 +85,45 @@ export default function SpecialRoundSelection() {
             Rondas especiales:
           </CustomText>
         </View>
-        <View className="flex-row flex-wrap items-center justify-evenly gap-2">
-          {Object.entries(specialRounds).map(([roundType, value]) => (
-            <Pressable
-              key={roundType}
-              className={
-                "py-3 px-5 rounded-full items-center border border-onBackground-accent min-w-44 " +
-                (value > 0 ? "bg-app-secondary" : "bg-transparent")
+        <View className="gap-2">
+          {Object.entries(specialRounds).reduce(
+            (rows, [roundType, value], index, array) => {
+              if (index % 2 === 0) {
+                const pair = array.slice(index, index + 2);
+                const isSingleItem = pair.length === 1;
+                rows.push(
+                  <View
+                    key={`row-${index}`}
+                    className="flex-row gap-2 justify-center"
+                  >
+                    {pair.map(([rt, val]) => (
+                      <Pressable
+                        key={rt}
+                        className={
+                          "py-3 gap-1 rounded-full items-center justify-center border border-onBackground-accent " +
+                          (isSingleItem ? "px-7 " : "flex-1 px-5 ") +
+                          (val > 0 ? "bg-app-secondary" : "bg-transparent")
+                        }
+                        onPress={() => {
+                          setSelectedSpecialRound({ [rt]: val });
+                          setInputValue(String(Math.round(val * 100)));
+                        }}
+                      >
+                        <CustomText className="text-center text-lg leading-6">
+                          {SPECIAL_ROUNDS_TITLES[rt]}
+                        </CustomText>
+                        <CustomText className="text-center text-onBackground-secondary">
+                          {Math.round(val * 100)}/100
+                        </CustomText>
+                      </Pressable>
+                    ))}
+                  </View>,
+                );
               }
-              onPress={() => {
-                setSelectedSpecialRound({ [roundType]: value });
-                setInputValue(String(Math.round(value * 100)));
-              }}
-            >
-              <CustomText className="text-center text-lg">
-                {SPECIAL_ROUNDS_TITLES[roundType]}
-              </CustomText>
-              <CustomText className="text-center text-onBackground-secondary">
-                {Math.round(value * 100)}/100
-              </CustomText>
-            </Pressable>
-          ))}
+              return rows;
+            },
+            [] as React.ReactNode[],
+          )}
         </View>
       </Section>
     </>
